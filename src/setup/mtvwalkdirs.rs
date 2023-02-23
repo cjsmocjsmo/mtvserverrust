@@ -1,11 +1,5 @@
-
-
 use std::env;
-
 use walkdir::WalkDir;
-
-
-
 
 pub fn walk_music_dir_mp3() -> Vec<String> {
     let mut mp3vec = Vec::new();

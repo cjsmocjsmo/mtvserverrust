@@ -1,4 +1,3 @@
-
 use std::env;
 pub fn set_env_var(p1: String, p2: String) -> Result<(), Box<dyn std::error::Error>> {
     env::set_var(p1.clone(), p2);

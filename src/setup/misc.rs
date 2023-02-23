@@ -1,8 +1,8 @@
-use md5::{Digest, Md5};
 use byte_unit::Byte;
-use walkdir::WalkDir;
-use std::path::Path;
 use filesize::PathExt;
+use md5::{Digest, Md5};
+use std::path::Path;
+use walkdir::WalkDir;
 
 pub fn get_md5(astring: String) -> String {
     let mut hasher2 = Md5::new();

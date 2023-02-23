@@ -40,14 +40,78 @@ pub fn split_base_dir(astring: String) -> String {
     base_dir
 }
 
-pub fn split_filename(x: String) -> String {
+pub fn image_split_artist(x: String) -> String {
     let filesplit = x.split("/");
-    let mut filenamevec = vec!();
+    let mut filenamevec = vec![];
     for file in filesplit {
         filenamevec.push(file);
     }
 
-    let count = &filenamevec.len() -1;
+    let mut fin = vec![];
+    for f in filenamevec {
+        fin.push(f);
+    }
+
+    String::from(fin[1])
+}
+
+pub fn music_split_artist(x: String) -> String {
+    let filesplit = x.split("/");
+    let mut filenamevec = vec![];
+    for file in filesplit {
+        filenamevec.push(file);
+    }
+
+    let mut fin = vec![];
+    for f in filenamevec {
+        fin.push(f);
+    }
+
+    String::from(fin[1])
+}
+
+pub fn image_split_album(x: String) -> String {
+    let filesplit = x.split("/");
+    let mut filenamevec = vec![];
+    for file in filesplit {
+        filenamevec.push(file);
+    }
+
+    let album_result = filenamevec.last();
+    let album = match album_result {
+        Some(album) => album.to_string(),
+        None => "None".to_string(),
+    };
+
+    album.to_string()
+}
+
+pub fn music_split_album(x: String) -> String {
+    let filesplit = x.split("/");
+    let mut filenamevec = vec![];
+    for file in filesplit {
+        filenamevec.push(file);
+    }
+
+    let count = &filenamevec.len() - 2;
+    filenamevec.drain(0..count);
+    let mut album = "";
+    for f in filenamevec {
+        album = f;
+    };
+
+    String::from(album)
+}
+
+
+pub fn split_filename(x: String) -> String {
+    let filesplit = x.split("/");
+    let mut filenamevec = vec![];
+    for file in filesplit {
+        filenamevec.push(file);
+    }
+
+    let count = &filenamevec.len() - 1;
     filenamevec.drain(0..count);
     let mut finalvec = "";
     for f in filenamevec {
@@ -55,17 +119,14 @@ pub fn split_filename(x: String) -> String {
     }
 
     let fname = finalvec.split(".");
-    let mut svec = vec!();
+    let mut svec = vec![];
     // let mut foo = "";
     for f in fname {
         svec.push(f);
-
     }
     svec.pop();
 
     let filename = svec.get(0).unwrap();
 
     filename.to_string()
-
-    
 }

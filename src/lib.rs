@@ -9,44 +9,9 @@ use std::env;
 use json::object;
 // use std::path::Path;
 // use filesize::PathExt;
-use id3::{Tag, TagLike};
+// use id3::{Tag, TagLike};
 
 mod setup;
-
-// #[derive(Debug)]
-// struct ImageInfo {
-//     imageid: String,
-//     fullpath: String,
-//     basedir: String,
-//     filename: String,
-//     ext: String,
-//     b64img: String,
-//     width: u32,
-//     height: u32,
-//     idx: u32,
-//     fsize: u32,
-// }
-// struct Mp3Info {
-//     imageid: String,
-//     fullpath: String,
-//     basedir: String,
-//     filename: String,
-//     ext: String,
-//     imgurl: String,
-//     artist: String,
-//     album: String,
-//     song: String,
-//     genre: String,
-//     idx: u32,
-//     fsize: u64,
-// }
-
-// pub fn get_file_size(x: String) -> u64 {
-//     let path = Path::new(&x);
-//     let realsize = path.size_on_disk().unwrap();
-
-//     realsize
-// }
 
 pub fn process_music_images() {
     // let mtv_music_path = env::var("MTV_MUSIC_PATH").expect("$MTV_MUSIC_PATH is not set");
@@ -59,24 +24,33 @@ pub fn process_music_images() {
         image_count = image_count + 1;
 
         let dims = setup::mtvimageops::get_image_dims(jpg.clone());
-        let newdims = setup::mtvimageops::normalize_music_image(jpg.clone(), dims);
-        // println!("{}", jpg.clone());
-
+        let newdims = setup::mtvimageops::normalize_music_image(dims);
         let base_dir = setup::splitstrings::split_base_dir(jpg.clone());
         let file_name = setup::splitstrings::split_filename(jpg.clone());
         let extension = setup::splitstrings::split_ext(jpg.clone());
 
+        let artist_results = setup::splitstrings::image_split_artist(base_dir.clone());
+        println!("this is artist: {}", artist_results);
+
+        let album_results = setup::splitstrings::image_split_album(base_dir.clone());
+
+        // let music_artist_results = setup::splitstrings::music_split_artist(base_dir.clone());
+        // println!("album is: {}", music_artist_results);
+
         let imginfo = object! {
             imageid: setup::misc::get_md5(jpg.clone()),
-            fullpath: jpg.clone(),
+            filename_artist: artist_results,
+            filename_album: album_results,
             basedir: base_dir.clone(),
             filename: file_name.clone(),
             ext: extension.clone(),
-            b64img: setup::mtvimageops::to_base64_str(jpg.clone(), newdims.0, newdims.1),
             width: newdims.0,
             height: newdims.1,
             idx: image_count,
             fsize: setup::misc::get_file_size(jpg.clone()),
+            fullpath: jpg.clone(),
+            b64img: setup::mtvimageops::to_base64_str(jpg.clone(), newdims.0, newdims.1),
+
         };
 
         let ifo = json::stringify(imginfo.dump());
@@ -87,10 +61,10 @@ pub fn process_music_images() {
 
 
         let a = format!("{}/", mtv_music_metadata_path.as_str());
-        let b = format!("MusicMeta_{}.json", image_count);
+        let b = format!("Music_Image_Meta_{}.json", image_count);
         let outpath = a + &b;
 
-        println!("\n\n\n ifo {:#?}", ifo);
+        // println!("\n\n\n ifo {:#?}", ifo);
         std::fs::write(
             outpath,
             ifo,
@@ -102,16 +76,6 @@ pub fn process_music_images() {
     println!("There are {} jpgs", image_count);
 }
 
-pub fn get_tag_info(x: String) -> (String, String, String, String) {
-    let tag = Tag::read_from_path(x).unwrap();
-    let artist = tag.artist().unwrap().to_string();
-    let album = tag.album().unwrap().to_string();
-    let song = tag.title().unwrap().to_string();
-    let genre = tag.genre().unwrap().to_string();
-
-    (artist, album, song, genre)
-}
-
 pub fn process_mp3s() {
     let mp3svec = setup::mtvwalkdirs::walk_music_dir_mp3();
 
@@ -120,27 +84,48 @@ pub fn process_mp3s() {
         index = index + 1;
 
         let voodoo = "None".to_string();
-
-        let tags = get_tag_info(mp3.clone());
+        let tags = setup::mtvmp3::get_tag_info(mp3.clone());
+        let base_dir = setup::splitstrings::split_base_dir(mp3.clone());
+        let music_artist_results = setup::splitstrings::music_split_artist(base_dir.clone());
+        let music_album_results = setup::splitstrings::music_split_album(base_dir.clone());
 
         let mp3_info = object! {
             mp3id: setup::misc::get_md5(mp3.clone()),
             fullpath: mp3.clone(),
-            basedir: setup::splitstrings::split_base_dir(mp3.clone()),
+            basedir: base_dir.clone(),
             filename: setup::splitstrings::split_filename(mp3.clone()),
             ext: setup::splitstrings::split_ext(mp3.clone()),
             imgurl: voodoo.clone(),
-            artist: tags.0,
-            album: tags.1,
-            song: tags.2,
-            genre: tags.3,
+            mp3_url: voodoo.clone(),
+            tag_artist: tags.0,
+            tag_album: tags.1,
+            tag_title: tags.2,
+            tag_genre: tags.3,
             idx: index,
             fsize: setup::misc::get_file_size(mp3.clone()),
+            filename_artist: music_artist_results,
+            filename_album: music_album_results,
         };
 
-        mp3_info.dump();
+        let mfo = json::stringify(mp3_info.dump());
 
-        println!("\n\n\n mp3info {}", mp3_info);
+        let mtv_music_metadata_path =
+            env::var("MTV_MUSIC_METADATA_PATH")
+                .expect("$MTV_MUSIC_METADATA_PATH is not set");
+
+        
+        let a = format!("{}/", mtv_music_metadata_path.as_str());
+        let b = format!("Music_File_Meta_{}.json", index);
+        let outpath = a + &b;
+
+        println!("\n\n\n ifo {}", mfo);
+        std::fs::write(
+            outpath,
+            mfo,
+        )
+        .unwrap();
+
+        // println!("\n\n\n mp3info {}", mfo.clone());
     }
     println!("There are {} mp3s", index.to_string());
 }

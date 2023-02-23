@@ -1,23 +1,15 @@
+use base64::{alphabet, engine, Engine as _};
 use image;
-use base64::{engine, alphabet, Engine as _};
-// use image::codecs::png::PngEncoder;
-// use image::io::Reader as ImageReader;
 use image::GenericImageView;
-// use image::{ColorType, ImageEncoder};
-// use std::io::BufWriter;
-// use std::num::NonZeroU32;
-
-// use fast_image_resize as fr;
 
 pub fn get_image_dims(x: String) -> (u32, u32) {
     let img = image::open(x).unwrap();
-
     let dims = img.dimensions();
 
     dims
 }
 
-pub fn normalize_music_image(img: String, dims: (u32, u32)) -> (u32, u32) {
+pub fn normalize_music_image(dims: (u32, u32)) -> (u32, u32) {
     let mut largest = 0;
 
     if dims.0 == dims.1 {
@@ -39,13 +31,10 @@ pub fn normalize_music_image(img: String, dims: (u32, u32)) -> (u32, u32) {
         resizetup = (300, 300);
     }
 
-    // resize_image(img, resizetup);
-
     resizetup
 }
 
-pub fn to_base64_str(x: String, w: u32, h: u32) -> String{
-    // println!("{}", x.clone());
+pub fn to_base64_str(x: String, w: u32, h: u32) -> String {
     let img_result = image::open(x.clone());
     let img = match img_result {
         Ok(img) => img,
@@ -53,13 +42,12 @@ pub fn to_base64_str(x: String, w: u32, h: u32) -> String{
     };
     let thumb = img.thumbnail(w, h);
     let thumb_bytes = thumb.into_bytes();
-    // let thumb_bytes = image::open(x).unwrap().into_bytes();
-    
-    let alphabet =
-    alphabet::Alphabet::new("+/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
-    .unwrap();
 
-// a very weird config that encodes with padding but requires no padding when decoding...?
+    let alphabet =
+        alphabet::Alphabet::new("+/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+            .unwrap();
+
+    // a very weird config that encodes with padding but requires no padding when decoding...?
     let crazy_config = engine::GeneralPurposeConfig::new()
         .with_decode_allow_trailing_bits(true)
         .with_encode_padding(true)
@@ -71,6 +59,14 @@ pub fn to_base64_str(x: String, w: u32, h: u32) -> String{
 
     encoded
 }
+
+// use image::codecs::png::PngEncoder;
+// use image::io::Reader as ImageReader;
+// use image::{ColorType, ImageEncoder};
+// use std::io::BufWriter;
+// use std::num::NonZeroU32;
+
+// use fast_image_resize as fr;
 
 // fn resize_image(x: String, dimstup: (u32, u32)) {
 //     // Read source image from file
@@ -119,4 +115,3 @@ pub fn to_base64_str(x: String, w: u32, h: u32) -> String{
 //         )
 //         .unwrap();
 // }
-

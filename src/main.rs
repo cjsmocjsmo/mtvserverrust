@@ -5,9 +5,9 @@ mod setup;
 fn main() {
     setup::envvars::set_all_env_vars();
 
-    mtvserver::process_music_images();
+    // mtvserver::process_music_images();
 
-    // mtvserver::process_mp3s();
+    mtvserver::process_mp3s();
 
     let _movievec = setup::mtvwalkdirs::walk_movies_dir();
     let _moviethumbvec = setup::mtvwalkdirs::walk_movies_thumb_dir();
@@ -17,5 +17,8 @@ fn main() {
 
     let mtv_media_path = env::var("MTV_MEDIA_PATH").expect("$MTV_MEDIA_PATH is not set");
 
-    println!("Total size: {} .", setup::misc::media_total_size(mtv_media_path));
+    println!(
+        "Total size: {} .",
+        setup::misc::media_total_size(mtv_media_path)
+    );
 }

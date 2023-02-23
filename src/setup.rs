@@ -7,3 +7,5 @@ pub mod splitstrings;
 pub mod misc;
 
 pub mod mtvimageops;
+
+pub mod mtvmp3;
