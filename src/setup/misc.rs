@@ -1,6 +1,8 @@
 use md5::{Digest, Md5};
 use byte_unit::Byte;
 use walkdir::WalkDir;
+use std::path::Path;
+use filesize::PathExt;
 
 pub fn get_md5(astring: String) -> String {
     let mut hasher2 = Md5::new();
@@ -9,6 +11,13 @@ pub fn get_md5(astring: String) -> String {
     let foo = format!("{:x}", a_id);
 
     foo
+}
+
+pub fn get_file_size(x: String) -> u64 {
+    let path = Path::new(&x);
+    let realsize = path.size_on_disk().unwrap();
+
+    realsize
 }
 
 pub fn media_total_size(addr: String) -> String {

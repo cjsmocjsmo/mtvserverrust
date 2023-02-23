@@ -1,3 +1,4 @@
+use std::env;
 use std::path::Path;
 
 pub fn split_ext(astring: String) -> String {
@@ -8,19 +9,63 @@ pub fn split_ext(astring: String) -> String {
         None => String::from("split_ext did not work"),
     };
 
-    boo
+    let ext = String::from(".") + boo.as_str();
+
+    ext
 }
 
-pub fn split_base_dir(x: String, v: String) -> String {
-    let path = Path::new(&x);
-    let boo_results = path.strip_prefix(v);
-    let boo = match boo_results {
-        Ok(b) => b.to_string_lossy().to_string(),
-        Err(error) => panic!("it didnt work: {:?}", error),
-    };
+pub fn split_base_dir(astring: String) -> String {
+    let mysplit = astring.split("/");
+    let mut myvec = vec![];
 
-    boo
-    // let items: Vec<&str> = x.split("/media/charliepi/FOO/music/").collect();
-    // items[1].to_string()
-    // set MTV_MEDIA_PATH=/media/charliepi/FOO/music/music/
+    for my in mysplit {
+        myvec.push(my);
+    }
+
+    let path = env::var("MTV_MUSIC_PATH").unwrap();
+    let envsplit = path.split("/");
+
+    let mut envvec = vec![];
+
+    for env in envsplit {
+        envvec.push(env);
+    }
+
+    let count = envvec.len() - 1;
+    myvec.drain(0..count);
+    myvec.pop();
+
+    let base_dir = myvec.join("/");
+
+    base_dir
+}
+
+pub fn split_filename(x: String) -> String {
+    let filesplit = x.split("/");
+    let mut filenamevec = vec!();
+    for file in filesplit {
+        filenamevec.push(file);
+    }
+
+    let count = &filenamevec.len() -1;
+    filenamevec.drain(0..count);
+    let mut finalvec = "";
+    for f in filenamevec {
+        finalvec = f;
+    }
+
+    let fname = finalvec.split(".");
+    let mut svec = vec!();
+    // let mut foo = "";
+    for f in fname {
+        svec.push(f);
+
+    }
+    svec.pop();
+
+    let filename = svec.get(0).unwrap();
+
+    filename.to_string()
+
+    
 }

@@ -17,6 +17,5 @@ fn main() {
 
     let mtv_media_path = env::var("MTV_MEDIA_PATH").expect("$MTV_MEDIA_PATH is not set");
 
-    let size = setup::misc::media_total_size(mtv_media_path);
-    println!("Total size: {} .", size);
+    println!("Total size: {} .", setup::misc::media_total_size(mtv_media_path));
 }

@@ -6,8 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base64 = "0.21.0"
 byte-unit = "4.0.18"
 fast_image_resize = "2.5.0"
+filesize = "0.2.0"
+id3 = "1.6.0"
 image = "0.24.5"
+json = "0.12.4"
 md-5 = "0.10.5"
 walkdir = "2.3.2"
