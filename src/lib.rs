@@ -23,22 +23,22 @@ pub fn process_music_images() {
     for jpg in mp3_imagesvec {
         image_count = image_count + 1;
 
-        let dims = setup::mtvimageops::get_image_dims(jpg.clone());
+        let dims = setup::mtvimageops::get_image_dims(&jpg);
         let newdims = setup::mtvimageops::normalize_music_image(dims);
-        let base_dir = setup::splitstrings::split_base_dir(jpg.clone());
-        let file_name = setup::splitstrings::split_filename(jpg.clone());
-        let extension = setup::splitstrings::split_ext(jpg.clone());
+        let base_dir = setup::splitstrings::split_base_dir(&jpg);
+        let file_name = setup::splitstrings::split_filename(&jpg);
+        let extension = setup::splitstrings::split_ext(&jpg);
 
-        let artist_results = setup::splitstrings::image_split_artist(base_dir.clone());
+        let artist_results = setup::splitstrings::image_split_artist(&base_dir);
         println!("this is artist: {}", artist_results);
 
-        let album_results = setup::splitstrings::image_split_album(base_dir.clone());
+        let album_results = setup::splitstrings::image_split_album(&base_dir);
 
         // let music_artist_results = setup::splitstrings::music_split_artist(base_dir.clone());
         // println!("album is: {}", music_artist_results);
 
         let imginfo = object! {
-            imageid: setup::misc::get_md5(jpg.clone()),
+            imageid: setup::misc::get_md5(&jpg),
             filename_artist: artist_results,
             filename_album: album_results,
             basedir: base_dir.clone(),
@@ -47,9 +47,9 @@ pub fn process_music_images() {
             width: newdims.0,
             height: newdims.1,
             idx: image_count,
-            fsize: setup::misc::get_file_size(jpg.clone()),
-            fullpath: jpg.clone(),
-            b64img: setup::mtvimageops::to_base64_str(jpg.clone(), newdims.0, newdims.1),
+            fsize: setup::misc::get_file_size(&jpg),
+            fullpath: &*jpg,
+            b64img: setup::mtvimageops::to_base64_str(&jpg, newdims.0, newdims.1),
 
         };
 
@@ -78,40 +78,40 @@ pub fn process_mp3s() {
     for mp3 in mp3svec {
         index = index + 1;
 
-        let voodoo = "None".to_string();
-        let tags = setup::mtvmp3::get_tag_info(mp3.clone());
-        let base_dir = setup::splitstrings::split_base_dir(mp3.clone());
-        let filename_results = setup::splitstrings::split_filename(mp3.clone());
-        let music_artist_results = setup::splitstrings::music_split_artist(base_dir.clone());
-        let music_album_results = setup::splitstrings::music_split_album(base_dir.clone());
-        let duration_results = setup::mtvmp3::get_duration(mp3.clone());
-        let artc = setup::mtvmp3::check_artist(music_artist_results.clone(), tags.0.clone());
-        let albc = setup::mtvmp3::check_album(music_album_results.clone(), tags.1.clone());
-        let sc = setup::mtvmp3::check_song(filename_results.clone(), tags.2.clone());
+        let voodoo: &String = &"None".to_string();
+        let tags = setup::mtvmp3::get_tag_info(&mp3);
+        let base_dir = setup::splitstrings::split_base_dir(&mp3);
+        let filename_results = setup::splitstrings::split_filename(&mp3);
+        let music_artist_results = setup::splitstrings::music_split_artist(&base_dir);
+        let music_album_results = setup::splitstrings::music_split_album(&base_dir);
+        let duration_results = setup::mtvmp3::get_duration(&mp3);
+        let artc = setup::mtvmp3::check_artist(&music_artist_results, &tags.0);
+        let albc = setup::mtvmp3::check_album(&music_album_results, &tags.1);
+        let sc = setup::mtvmp3::check_song(&filename_results, &tags.2);
 
         if artc == true && albc == true && sc == true {
-            println!("\n they all match:\n {}", mp3.clone());
+            println!("\n they all match:\n {}", &mp3);
 
             let mp3_info = object! {
-                mp3id: setup::misc::get_md5(mp3.clone()),
-                fullpath: mp3.clone(),
-                basedir: base_dir.clone(),
+                mp3id: setup::misc::get_md5(&mp3),
+                fullpath: &*mp3,
+                basedir: &*base_dir,
                 filename: filename_results,
-                ext: setup::splitstrings::split_ext(mp3.clone()),
-                imgurl: voodoo.clone(),
-                mp3_url: voodoo.clone(),
-                tag_artist: tags.0.clone(),
-                tag_album: tags.1,
-                tag_title: tags.2,
-                tag_genre: tags.3,
+                ext: setup::splitstrings::split_ext(&mp3),
+                imgurl: &**voodoo,
+                mp3_url: &**voodoo,
+                tag_artist: &*tags.0,
+                tag_album: &*tags.1,
+                tag_title: &*tags.2,
+                tag_genre: &*tags.3,
                 idx: index,
-                fsize: setup::misc::get_file_size(mp3.clone()),
-                filename_artist: music_artist_results.clone(),
-                filename_album: music_album_results,
+                fsize: setup::misc::get_file_size(&mp3),
+                filename_artist: &*music_artist_results,
+                filename_album: &*music_album_results,
                 duration: duration_results,
             };
 
-            let mfo = json::stringify(mp3_info.dump());
+            let mfo: String = json::stringify(mp3_info.dump());
 
             let mtv_music_metadata_path =
                 env::var("MTV_MUSIC_METADATA_PATH").expect("$MTV_MUSIC_METADATA_PATH is not set");
@@ -121,12 +121,12 @@ pub fn process_mp3s() {
             let outpath = a + &b;
             std::fs::write(outpath, mfo.clone()).unwrap();
 
-        println!("\n\n\n mp3info {}", mfo.clone());
+            println!("\n\n\n mp3info {}", mfo.clone());
         } else {
             // println!("{:?}", mp3.clone());
             named_incorrectly_vec.push(mp3.clone());
         }
-    };
+    }
     println!(
         "there are {} mp3s named incorrectly",
         named_incorrectly_vec.len()

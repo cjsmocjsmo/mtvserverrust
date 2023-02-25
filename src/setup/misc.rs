@@ -4,16 +4,16 @@ use md5::{Digest, Md5};
 use std::path::Path;
 use walkdir::WalkDir;
 
-pub fn get_md5(astring: String) -> String {
+pub fn get_md5(astring: &String) -> String {
     let mut hasher2 = Md5::new();
-    hasher2.update(astring.clone());
+    hasher2.update(&astring);
     let a_id = hasher2.finalize();
     let foo = format!("{:x}", a_id);
 
     foo
 }
 
-pub fn get_file_size(x: String) -> u64 {
+pub fn get_file_size(x: &String) -> u64 {
     let path = Path::new(&x);
     let realsize = path.size_on_disk().unwrap();
 

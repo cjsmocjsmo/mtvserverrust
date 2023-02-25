@@ -1,10 +1,9 @@
 use base64::{alphabet, engine, Engine as _};
 use image;
-use image::GenericImageView;
+// use image::GenericImageView;
 
-pub fn get_image_dims(x: String) -> (u32, u32) {
-    let img = image::open(x).unwrap();
-    let dims = img.dimensions();
+pub fn get_image_dims(x: &String) -> (u32, u32) {
+    let dims = image::image_dimensions(&x).expect("get image dims has failed");
 
     dims
 }
@@ -34,8 +33,8 @@ pub fn normalize_music_image(dims: (u32, u32)) -> (u32, u32) {
     resizetup
 }
 
-pub fn to_base64_str(x: String, w: u32, h: u32) -> String {
-    let img_result = image::open(x.clone());
+pub fn to_base64_str(x: &String, w: u32, h: u32) -> String {
+    let img_result = image::open(&x);
     let img = match img_result {
         Ok(img) => img,
         Err(error) => panic!("problem opening file {:?}", error),

@@ -7,7 +7,7 @@ fn main() {
 
     setup::cleanmeta::clean_meta();
 
-    // mtvserver::process_music_images();
+    mtvserver::process_music_images();
 
     mtvserver::process_mp3s();
 

@@ -2,7 +2,7 @@ use id3::{Tag, TagLike};
 use mp3_duration;
 use std::path::Path;
 
-pub fn get_tag_info(x: String) -> (String, String, String, String) {
+pub fn get_tag_info(x: &String) -> (String, String, String, String) {
     let tag = Tag::read_from_path(x).unwrap();
     let artist = tag.artist().unwrap().to_string();
     let album = tag.album().unwrap().to_string();
@@ -12,7 +12,7 @@ pub fn get_tag_info(x: String) -> (String, String, String, String) {
     (artist, album, song, genre)
 }
 
-pub fn get_duration(x: String) -> String {
+pub fn get_duration(x: &String) -> String {
     let path = Path::new(&x);
     let dur_sec = mp3_duration::from_path(&path).expect("this is duration exception");
     
@@ -72,9 +72,9 @@ pub fn split_sep3(x: String) -> Vec<String> {
     fvec
 }
 
-pub fn check_artist(x: String, y: String) -> bool {
-    let f = split_sep1(x);
-    let t = split_sep2(y);
+pub fn check_artist(x: &String, y: &String) -> bool {
+    let f = split_sep1((&x).to_string());
+    let t = split_sep2((&y).to_string());
     if f != t {
         return false;
     } else {
@@ -82,9 +82,9 @@ pub fn check_artist(x: String, y: String) -> bool {
     }
 }
 
-pub fn check_album(x: String, y: String) -> bool {
-    let f = split_sep1(x);
-    let t = split_sep2(y);
+pub fn check_album(x: &String, y: &String) -> bool {
+    let f = split_sep1((&x).to_string());
+    let t = split_sep2((&y).to_string());
     if f != t {
         return false;
     } else {
@@ -92,11 +92,11 @@ pub fn check_album(x: String, y: String) -> bool {
     }
 }
 
-pub fn check_song(f: String, t: String) -> bool{
-    let mut xx = split_sep3(f);
+pub fn check_song(f: &String, t: &String) -> bool{
+    let mut xx = split_sep3((&f).to_string());
     let count = xx.len() - 1;
     xx.drain(0..count);
-    let yy = split_sep2(t);
+    let yy = split_sep2((&f).to_string());
     let mut pussy = false;
     for x in xx.clone() {
         let fuck = split_sep1(x);

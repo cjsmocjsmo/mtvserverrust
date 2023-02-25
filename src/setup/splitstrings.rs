@@ -1,7 +1,7 @@
 use std::env;
 use std::path::Path;
 
-pub fn split_ext(astring: String) -> String {
+pub fn split_ext(astring: &String) -> String {
     let path = Path::new(&astring);
     let boo_results = path.extension();
     let boo = match boo_results {
@@ -14,7 +14,7 @@ pub fn split_ext(astring: String) -> String {
     ext
 }
 
-pub fn split_base_dir(astring: String) -> String {
+pub fn split_base_dir(astring: &String) -> String {
     let mysplit = astring.split("/");
     let mut myvec = vec![];
 
@@ -40,7 +40,7 @@ pub fn split_base_dir(astring: String) -> String {
     base_dir
 }
 
-pub fn image_split_artist(x: String) -> String {
+pub fn image_split_artist(x: &String) -> String {
     let filesplit = x.split("/");
     let mut filenamevec = vec![];
     for file in filesplit {
@@ -55,7 +55,7 @@ pub fn image_split_artist(x: String) -> String {
     String::from(fin[1])
 }
 
-pub fn music_split_artist(x: String) -> String {
+pub fn music_split_artist(x: &String) -> String {
     let filesplit = x.split("/");
     let mut filenamevec = vec![];
     for file in filesplit {
@@ -70,7 +70,7 @@ pub fn music_split_artist(x: String) -> String {
     String::from(fin[1])
 }
 
-pub fn image_split_album(x: String) -> String {
+pub fn image_split_album(x: &String) -> String {
     let filesplit = x.split("/");
     let mut filenamevec = vec![];
     for file in filesplit {
@@ -86,7 +86,7 @@ pub fn image_split_album(x: String) -> String {
     album.to_string()
 }
 
-pub fn music_split_album(x: String) -> String {
+pub fn music_split_album(x: &String) -> String {
     let filesplit = x.split("/");
     let mut filenamevec = vec![];
     for file in filesplit {
@@ -104,7 +104,7 @@ pub fn music_split_album(x: String) -> String {
 }
 
 
-pub fn split_filename(x: String) -> String {
+pub fn split_filename(x: &String) -> String {
     let filesplit = x.split("/");
     let mut filenamevec = vec![];
     for file in filesplit {
