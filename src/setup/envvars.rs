@@ -17,7 +17,7 @@ pub fn set_all_env_vars() {
     let _media_env_set = set_env_var(media1, media2).is_ok();
 
     let music1 = String::from("MTV_MUSIC_PATH");
-    let music2 = String::from("/media/charliepi/FOO/media/music/C");
+    let music2 = String::from("/media/charliepi/FOO/media/music/");
     let _music_env_set = set_env_var(music1, music2).is_ok();
 
     let music_thumb1 = String::from("MTV_MUSIC_THUMBNAIL_PATH");

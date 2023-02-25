@@ -9,3 +9,5 @@ pub mod misc;
 pub mod mtvimageops;
 
 pub mod mtvmp3;
+
+pub mod cleanmeta;

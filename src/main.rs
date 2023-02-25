@@ -5,6 +5,8 @@ mod setup;
 fn main() {
     setup::envvars::set_all_env_vars();
 
+    setup::cleanmeta::clean_meta();
+
     // mtvserver::process_music_images();
 
     mtvserver::process_mp3s();
