@@ -21,6 +21,7 @@ services:
       - MTV_THUMBNAIL_PIC_PATH=/static
       - MTV_SERVER_PORT=8888
       - MTV_SERVER_ADDRESS=http://192.168.0.94
+      - MTV_DOCKER_VAR=DOCKER
       
 
     networks:
