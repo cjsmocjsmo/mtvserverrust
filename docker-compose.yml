@@ -1,0 +1,62 @@
+version: "3.3"
+
+services:
+  db:
+    # image: andresvidal/rpi3-mongodb3
+    image: mongo:4.4.0
+    networks:
+      - mtv
+    ports:
+      - 27017:27017
+
+  mtv:
+    image: mtv:0.0.1
+    build: .
+    environment:
+      - MTV_MONGODB_ADDRESS=mongodb://db:27017/mtv
+      
+      - MTV_MOVIES_PATH=/root/fsData/Movies
+      - MTV_TVSHOWS_PATH=/root/fsData/TVShows
+      - MTV_NO_ART_PIC_PATH=./static/images/animals.jpg
+      - MTV_THUMBNAIL_PIC_PATH=/static
+      - MTV_SERVER_PORT=8888
+      - MTV_SERVER_ADDRESS=http://192.168.0.94
+      
+
+    networks:
+      - mtv
+    ports:
+      - 8888:8888
+    volumes:
+      - mtvvol:/root/fsData/
+      # - mtvpicvol:/root/static/
+      # - mtvlogvol:/root/logs/
+    depends_on:
+      - db
+
+networks:
+  mtv:
+
+volumes:
+  mtvvol:
+    driver: local
+    driver_opts:
+      type: none
+      device: /media/charliepi/FOO/media/
+      o: bind
+
+  # mtvpicvol:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: /home/pi/Thumbnails
+  #     o: bind
+
+  # mtvlogvol:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: /home/pi/LOGFILES
+  #     o: bind
+
+
