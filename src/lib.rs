@@ -42,6 +42,16 @@ pub fn clean_meta() {
 
 // perform a check here to see if we are using docker no need to set env vars if so
 
+pub fn get_docker_var() -> String {
+    let docker_var_results = env::var("MTV_DOCKER_VAR");
+    let docker_var = match docker_var_results{
+        Ok(docker_var) => docker_var,
+        Err(_error) => "docker var not set".to_string(),
+    };
+
+    docker_var
+}
+
 pub fn set_env_var(p1: String, p2: String) -> Result<(), Box<dyn std::error::Error>> {
     env::set_var(p1.clone(), p2);
     let value = env::var(p1.clone());

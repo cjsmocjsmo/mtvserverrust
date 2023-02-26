@@ -17,3 +17,8 @@ json = "0.12.4"
 md-5 = "0.10.5"
 mp3-duration = "0.1.10"
 walkdir = "2.3.2"
+
+
+[dependencies.mongodb]
+version = "2.3.0"
+features = ["tokio-sync"]
