@@ -4,6 +4,7 @@ use filesize::PathExt;
 use glob::glob;
 use id3::{Tag, TagLike};
 use image;
+use json::object;
 use md5::{Digest, Md5};
 use mp3_duration;
 use std::env;
@@ -14,12 +15,14 @@ use walkdir::WalkDir;
 fn clean_movie_meta_dir() {
     let movie_meta_dir_path = env::var("MTV_MOVIES_METADATA_PATH").unwrap();
     let glob_str = movie_meta_dir_path + "/*.json";
+    let mut count = 0;
     for e in glob(glob_str.as_str()).expect("Failed to read glob pattern") {
         let rm_path = e.unwrap();
+        count = count + 1;
 
-        println!("{:?}", rm_path);
+        println!("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         fs::remove_file(rm_path).expect("File delete failed");
-        println!("File deleted successfully!");
+        println!("{} Files have been deleted successfully!", count);
     }
 }
 
@@ -40,11 +43,9 @@ pub fn clean_meta() {
     clean_music_meta_dir();
 }
 
-// perform a check here to see if we are using docker no need to set env vars if so
-
 pub fn get_docker_var() -> String {
     let docker_var_results = env::var("MTV_DOCKER_VAR");
-    let docker_var = match docker_var_results{
+    let docker_var = match docker_var_results {
         Ok(docker_var) => docker_var,
         Err(_error) => "docker var not set".to_string(),
     };
@@ -53,10 +54,10 @@ pub fn get_docker_var() -> String {
 }
 
 pub fn set_env_var(p1: String, p2: String) -> Result<(), Box<dyn std::error::Error>> {
-    env::set_var(p1.clone(), p2);
-    let value = env::var(p1.clone());
+    env::set_var(&p1, p2);
+    let value = env::var(&p1);
     if value.is_err() {
-        println!("Error: key not found not found");
+        println!("Error: key not found");
     } else {
         println!("key is set to: {}", value.unwrap());
     }
@@ -65,12 +66,12 @@ pub fn set_env_var(p1: String, p2: String) -> Result<(), Box<dyn std::error::Err
 }
 
 pub fn set_all_env_vars() {
-    let media1 = String::from("MTV_MEDIA_PATH");
+    let media1: String = String::from("MTV_MEDIA_PATH");
     let media2 = String::from("/media/charliepi/FOO/media");
     let _media_env_set = set_env_var(media1, media2).is_ok();
 
     let music1 = String::from("MTV_MUSIC_PATH");
-    let music2 = String::from("/media/charliepi/FOO/media/music/C/");
+    let music2 = String::from("/media/charliepi/FOO/media/music/");
     let _music_env_set = set_env_var(music1, music2).is_ok();
 
     let music_thumb1 = String::from("MTV_MUSIC_THUMBNAIL_PATH");
@@ -105,9 +106,8 @@ pub fn get_md5(astring: &String) -> String {
 
 pub fn get_file_size(x: &String) -> u64 {
     let path = Path::new(&x);
-    let realsize = path.size_on_disk().unwrap();
 
-    realsize
+    path.size_on_disk().unwrap()
 }
 
 pub fn media_total_size(addr: String) -> String {
@@ -132,10 +132,10 @@ pub fn split_ext(astring: &String) -> String {
     let boo_results = path.extension();
     let boo = match boo_results {
         Some(b) => b.to_string_lossy().to_string(),
-        None => String::from("split_ext did not work"),
+        None => "split_ext did not work".to_string(),
     };
 
-    let ext = String::from(".") + boo.as_str();
+    let ext = ".".to_string() + boo.as_str();
 
     ext
 }
@@ -489,14 +489,14 @@ pub fn check_album(x: &String, y: &String) -> bool {
     }
 }
 
-pub fn check_song(f: &String) -> bool {
+pub fn check_song(f: &String, s: &String) -> bool {
     let mut xx = split_sep3((&f).to_string());
     let count = xx.len() - 1;
     xx.drain(0..count);
-    let yy = split_sep2((&f).to_string());
+    let yy = split_sep2((&s).to_string());
     let mut pussy = false;
-    for x in xx.clone() {
-        let fuck = split_sep1(x);
+    for x in xx {
+        let fuck = split_sep1(x.to_string());
         if yy == fuck {
             pussy = true;
         } else {
@@ -562,6 +562,118 @@ pub fn to_base64_str(x: &String, w: u32, h: u32) -> String {
     let encoded = crazy_engine.encode(thumb_bytes);
 
     encoded
+}
+
+pub fn write_image_json_to_file(
+    id: String,
+    width: String,
+    height: String,
+    base_dir: String,
+    file_name: String,
+    extension: String,
+    artist_results: String,
+    album_results: String,
+    fsize_results: String,
+    b64image: String,
+    fullpath: String,
+    imagecount: String,
+) {
+    let imginfo = object! {
+        imageid: id,
+        filename_artist: artist_results,
+        filename_album: album_results,
+        basedir: base_dir,
+        filename: file_name,
+        ext: extension,
+        width: width,
+        height: height,
+        idx: &*imagecount,
+        fsize: fsize_results,
+        fullpath: fullpath,
+        b64img: b64image,
+    };
+
+    let ifo = json::stringify(imginfo.dump());
+
+    let mtv_music_metadata_path =
+        env::var("MTV_MUSIC_METADATA_PATH").expect("$MTV_MUSIC_METADATA_PATH is not set");
+
+    let a = format!("{}/", mtv_music_metadata_path.as_str());
+    let b = format!("Music_Image_Meta_{}.json", &imagecount);
+    let outpath = a + &b;
+
+    println!("\n\n\n ifo {:#?}", ifo);
+    std::fs::write(outpath, ifo).unwrap();
+}
+
+pub fn write_music_json_to_file(
+    id: String,
+    voodoo: String,
+    artist: String,
+    album: String,
+    song: String,
+    genre: String,
+    base_dir: String,
+    filename_results: String,
+    music_artist_results: String,
+    music_album_results: String,
+    duration_results: String,
+    artc: bool,
+    albc: bool,
+    sc: bool,
+    fullpath: String,
+    extension: String,
+    idx: String,
+    fsize_results: String,
+) {
+    let mut named_incorrectly_vec = vec![];
+
+    // println!("{}", artc);
+    // println!("{}", albc);
+    // println!("{}", sc);
+
+    if artc == true && albc == true && sc == true {
+        println!("\n they all match:\n {}", fullpath);
+
+        let mp3_info = object! {
+            mp3id: id,
+            fullpath: fullpath,
+            basedir: base_dir,
+            filename: filename_results,
+            ext: extension,
+            imgurl: &*voodoo,
+            mp3_url: &*voodoo,
+            tag_artist: artist,
+            tag_album: album,
+            tag_title: song,
+            tag_genre: genre,
+            idx: idx.clone(),
+            fsize: fsize_results,
+            filename_artist: &*music_artist_results,
+            filename_album: &*music_album_results,
+            duration: duration_results,
+        };
+
+        let mfo: String = json::stringify(mp3_info.dump());
+
+        let mtv_music_metadata_path =
+            env::var("MTV_MUSIC_METADATA_PATH").expect("$MTV_MUSIC_METADATA_PATH is not set");
+
+        let a = format!("{}/", mtv_music_metadata_path.as_str());
+        let b = format!("Music_File_Meta_{}.json", &idx);
+        let outpath = a + &b;
+        std::fs::write(outpath, mfo.clone()).unwrap();
+
+        println!("\n\n\n mp3info {}", mfo.clone());
+    } else {
+        // println!("{:?}", mp3.clone());
+        named_incorrectly_vec.push(fullpath.as_str());
+    }
+
+    for name in named_incorrectly_vec {
+        println!("nameed incorrectly with tags {}", name);
+    }
+    println!("There are {} mp3s", &idx);
 }
 
 // use image::codecs::png::PngEncoder;
