@@ -39,7 +39,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // }
 
     let thumb_path =
-        env::var("MTV_MOVIES_THUMBNAIL_PATH").expect("MTV_MOVIES_THUMBNAIL_PATH not set");
+        env::var("MTV_THUMBNAIL_PATH").expect("MTV_THUMBNAIL_PATH not set");
 
     let socket = gen_server_addr();
     println!("To setup db go to: http://{}/setup/now", socket.clone());
