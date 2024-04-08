@@ -33,9 +33,9 @@ pub fn set_env_vars() {
         env::set_var("MTV_TV_PATH", "/home/pimedia/PINAS/bazmnt/MTV/TVShows/");
     }
 
-    let thumb_path = env::var("MTV_MOVIES_THUMBNAIL_PATH");
+    let thumb_path = env::var("MTV_THUMBNAIL_PATH");
     if thumb_path.is_err() {
-        env::set_var("MTV_MOVIES_THUMBNAIL_PATH", "/usr/share/mtvsetup/mtvsetup/thumbnails/");
+        env::set_var("MTV_THUMBNAIL_PATH", "/usr/share/mtvsetup/mtvsetup/thumbnails/");
     }
 
     let static_path = env::var("MTV_STATIC_PATH");
