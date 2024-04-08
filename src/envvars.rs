@@ -24,13 +24,13 @@ pub fn set_env_vars() {
     // }
     let mov_path = env::var("MTV_MOVIES_PATH");
     if mov_path.is_err() {
-        env::set_var("MTV_MOVES_PATH", "/home/pimedia/PINAS/bazmnt/Movies/");
+        env::set_var("MTV_MOVES_PATH", "/home/pimedia/PINAS/bazmnt/MTV/Movies/");
     }
     println!("MTV_MOVIES_PATH: {:?}", env::var("MTV_MOVIES_PATH"));
 
     let tv_path = env::var("MTV_TV_PATH");
     if tv_path.is_err() {
-        env::set_var("MTV_TV_PATH", "/home/pimedia/PINAS/bazmnt/TVShows/");
+        env::set_var("MTV_TV_PATH", "/home/pimedia/PINAS/bazmnt/MTV/TVShows/");
     }
 
     let thumb_path = env::var("MTV_MOVIES_THUMBNAIL_PATH");
