@@ -366,6 +366,30 @@ pub async fn monarchlegacyofmonsters(path: web::Path<String>) -> impl Responder 
     HttpResponse::Ok().body(result)
 }
 
+#[get("/shogun/{season}")]
+pub async fn shogun(path: web::Path<String>) -> impl Responder {
+    let catagory = String::from("Shogun");
+    let season = path.into_inner();
+    let result = get_shows(catagory, season).await;
+    HttpResponse::Ok().body(result)
+}
+
+#[get("/fallout/{season}")]
+pub async fn fallout(path: web::Path<String>) -> impl Responder {
+    let catagory = String::from("Fallout");
+    let season = path.into_inner();
+    let result = get_shows(catagory, season).await;
+    HttpResponse::Ok().body(result)
+}
+
+#[get("/3bodyproblem/{season}")]
+pub async fn threebodyproblem(path: web::Path<String>) -> impl Responder {
+    let catagory = String::from("3BodyProblem");
+    let season = path.into_inner();
+    let result = get_shows(catagory, season).await;
+    HttpResponse::Ok().body(result)
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TVShow {
     pub id: u32,

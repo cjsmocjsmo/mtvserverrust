@@ -1,6 +1,8 @@
 use actix_cors::Cors;
 use actix_files as fs;
+// use actix::{Actor, StreamHandler};
 use actix_web::{App, HttpServer};
+// use actix_web_actors::ws;
 use std::env;
 use std::net::{Ipv4Addr, IpAddr, SocketAddr};
 use std::str::FromStr;
@@ -13,6 +15,8 @@ pub mod servertvs;
 // pub mod player;
 
 use env_logger::{Builder, Target};
+
+
 
 #[actix_web::main]
 
@@ -139,6 +143,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(servertvs::ahsoka)
             .service(servertvs::thecontinental)
             .service(servertvs::monarchlegacyofmonsters)
+            .service(servertvs::shogun)
+            .service(servertvs::fallout)
+            .service(servertvs::threebodyproblem)
             // .service(player::play)
             // .service(player::pause)
             // .service(player::stop)
@@ -164,3 +171,4 @@ pub fn gen_server_addr() -> SocketAddr {
 
     socket
 }
+
