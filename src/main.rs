@@ -46,7 +46,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         env::var("MTV_THUMBNAIL_PATH").expect("MTV_THUMBNAIL_PATH not set");
 
     let socket = gen_server_addr();
-    println!("To setup db go to: http://{}/setup/now", socket.clone());
+    println!("go to: http://{}/", socket.clone());
     HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
