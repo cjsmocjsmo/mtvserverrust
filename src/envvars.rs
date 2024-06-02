@@ -70,7 +70,7 @@ pub fn set_env_vars() {
 
     let db_path = env::var("MTV_DB_PATH");
     if db_path.is_err() {
-        env::set_var("MTV_DB_PATH", "/usr/share/mtvsetup/mtvsetup/db/mtv.db");
+        env::set_var("MTV_DB_PATH", "/usr/share/mtvdb/mtv.db");
     }
     // let db_check_file_path = env::var("MTV_DB_CHECK_FILE_PATH");
     // if db_check_file_path.is_err() {
