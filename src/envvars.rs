@@ -35,7 +35,7 @@ pub fn set_env_vars() {
 
     let thumb_path = env::var("MTV_THUMBNAIL_PATH");
     if thumb_path.is_err() {
-        env::set_var("MTV_THUMBNAIL_PATH", "/usr/share/mtvsetup/mtvsetup/thumbnails/");
+        env::set_var("MTV_THUMBNAIL_PATH", "/usr/share/mtvdb/thumbnails/");
     }
 
     let static_path = env::var("MTV_STATIC_PATH");
