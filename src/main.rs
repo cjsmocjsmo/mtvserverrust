@@ -1,22 +1,17 @@
 use actix_cors::Cors;
 use actix_files as fs;
-// use actix::{Actor, StreamHandler};
-use actix_web::{App, HttpServer};
-// use actix_web_actors::ws;
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use env_logger::{Builder, Target};
+use mpvipc::{Error, Mpv, MpvCommand, PlaylistAddOptions};
 use std::env;
-use std::net::{Ipv4Addr, IpAddr, SocketAddr};
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::process::Command;
 use std::str::FromStr;
 
 pub mod envvars;
 pub mod servermov;
-pub mod serverutils;
 pub mod servertvs;
-// pub mod setup;
-// pub mod player;
-
-use env_logger::{Builder, Target};
-
-
+pub mod serverutils;
 
 #[actix_web::main]
 
@@ -24,26 +19,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     log::info!("MTV Start");
     let _vars = envvars::set_env_vars();
     log::info!("Env Vars have been set");
-    
-    Builder::new()
-        .target(Target::Stdout)
-        .init();
+    let _mpv = init_mpv();
+    log::info!("MPV has been initialized");
 
-    
+    Builder::new().target(Target::Stdout).init();
 
-    // if setup::mtv_tables::db_file_exists() == false {
-    //     setup::mtv_tables::create_db_file();
-    //     log::info!("created db file")
-    // }
-    // let t_dir_exists = setup::mtv_image::thumbnail_dir_exists();
-
-    // if !t_dir_exists {
-    //     setup::mtv_image::create_thumbnail_dir();
-    //     log::info!("created thumb dir")
-    // }
-
-    let thumb_path =
-        env::var("MTV_THUMBNAIL_PATH").expect("MTV_THUMBNAIL_PATH not set");
+    let thumb_path = env::var("MTV_THUMBNAIL_PATH").expect("MTV_THUMBNAIL_PATH not set");
 
     let socket = gen_server_addr();
     println!("go to: http://{}/", socket.clone());
@@ -58,7 +39,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .wrap(cors)
             .service(serverutils::hello)
             .service(serverutils::get_stats)
-            // .service(serverutils::run_setup)
             .service(serverutils::run_setup_check)
             .service(servermov::action)
             .service(servermov::arnold)
@@ -146,11 +126,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(servertvs::shogun)
             .service(servertvs::fallout)
             .service(servertvs::threebodyproblem)
-            // .service(player::play)
-            // .service(player::pause)
-            // .service(player::stop)
-            // .service(player::next)
-            // .service(player::previous)
+            .service(start)
+            .service(pause)
+            .service(play)
+            .service(stop)
             .service(fs::Files::new("/thumbnails", thumb_path.clone()).show_files_listing())
     })
     .bind(socket)?
@@ -158,6 +137,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await?;
 
     Ok(())
+}
+
+pub fn init_mpv() {
+    Command::new("mpv")
+        .arg("--idle")
+        .arg("--input-ipc-server=/tmp/mpvsocket")
+        .spawn()
+        .expect("Failed to start mpv");
 }
 
 pub fn gen_server_addr() -> SocketAddr {
@@ -172,3 +159,64 @@ pub fn gen_server_addr() -> SocketAddr {
     socket
 }
 
+#[get("/start/{media}")]
+pub async fn start(path: web::Path<String>) -> impl Responder {
+    let mediapath = path.into_inner();
+    let _ = start_media(mediapath.clone());
+    let result = format!("Playing: {}", mediapath.clone());
+    HttpResponse::Ok().body(result)
+}
+
+pub fn start_media(media: String) -> Result<(), Error> {
+    let socket_path = "/tmp/mpvsocket";
+    let mpv = Mpv::connect(socket_path)?;
+    mpv.set_property("fullscreen", true)?;
+    mpv.run_command(MpvCommand::LoadFile {
+        file: media.into(),
+        option: PlaylistAddOptions::Replace,
+    })?;
+    mpv.disconnect();
+    Ok(())
+}
+
+#[get("/pause")]
+pub async fn pause() -> impl Responder {
+    let _ = pause_media();
+    HttpResponse::Ok().body("Paused")
+}
+
+pub fn pause_media() -> Result<(), Error> {
+    let socket_path = "/tmp/mpvsocket";
+    let mpv = Mpv::connect(socket_path)?;
+    mpv.set_property("pause", true)?;
+    mpv.disconnect();
+    Ok(())
+}
+
+#[get("/play")]
+pub async fn play() -> impl Responder {
+    let _ = play_media();
+    HttpResponse::Ok().body("Playing")
+}
+
+pub fn play_media() -> Result<(), Error> {
+    let socket_path = "/tmp/mpvsocket";
+    let mpv = Mpv::connect(socket_path)?;
+    mpv.set_property("pause", false)?;
+    mpv.disconnect();
+    Ok(())
+}
+
+#[get("/stop")]
+pub async fn stop() -> impl Responder {
+    let _ = stop_media();
+    HttpResponse::Ok().body("Stopped")
+}
+
+pub fn stop_media() -> Result<(), Error> {
+    let socket_path = "/tmp/mpvsocket";
+    let mpv = Mpv::connect(socket_path)?;
+    mpv.run_command(MpvCommand::Stop)?;
+    mpv.disconnect();
+    Ok(())
+}
