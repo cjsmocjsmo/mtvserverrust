@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _vars = envvars::set_env_vars();
     log::info!("Env Vars have been set");
     let _mpv = init_mpv();
-    log::info!("MPV has been initialized");
+    println!("MPV has been initialized");
 
     Builder::new().target(Target::Stdout).init();
 
@@ -162,8 +162,10 @@ pub fn gen_server_addr() -> SocketAddr {
 #[get("/start/{media}")]
 pub async fn start(path: web::Path<String>) -> impl Responder {
     let mediapath = path.into_inner();
+    println!("Playing: {}", mediapath.clone());
     let _ = start_media(mediapath.clone());
     let result = format!("Playing: {}", mediapath.clone());
+
     HttpResponse::Ok().body(result)
 }
 
@@ -176,12 +178,14 @@ pub fn start_media(media: String) -> Result<(), Error> {
         option: PlaylistAddOptions::Replace,
     })?;
     mpv.disconnect();
+
     Ok(())
 }
 
 #[get("/pause")]
 pub async fn pause() -> impl Responder {
     let _ = pause_media();
+
     HttpResponse::Ok().body("Paused")
 }
 
@@ -190,12 +194,14 @@ pub fn pause_media() -> Result<(), Error> {
     let mpv = Mpv::connect(socket_path)?;
     mpv.set_property("pause", true)?;
     mpv.disconnect();
+
     Ok(())
 }
 
 #[get("/play")]
 pub async fn play() -> impl Responder {
     let _ = play_media();
+
     HttpResponse::Ok().body("Playing")
 }
 
@@ -204,12 +210,14 @@ pub fn play_media() -> Result<(), Error> {
     let mpv = Mpv::connect(socket_path)?;
     mpv.set_property("pause", false)?;
     mpv.disconnect();
+
     Ok(())
 }
 
 #[get("/stop")]
 pub async fn stop() -> impl Responder {
     let _ = stop_media();
+
     HttpResponse::Ok().body("Stopped")
 }
 
@@ -218,5 +226,6 @@ pub fn stop_media() -> Result<(), Error> {
     let mpv = Mpv::connect(socket_path)?;
     mpv.run_command(MpvCommand::Stop)?;
     mpv.disconnect();
+
     Ok(())
 }

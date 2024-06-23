@@ -1,8 +1,8 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use rusqlite::Connection;
+use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::Path;
-use serde::{Deserialize, Serialize};
 
 #[get("/test")]
 pub async fn hello() -> impl Responder {
@@ -46,9 +46,9 @@ pub fn thumbnail_dir_exists() -> bool {
         env::var("MTV_THUMBNAIL_PATH").expect("$MTV_THUMBNAIL_PATH is not set");
     let path = std::path::Path::new(&mtv_thumbnail_path);
     if path.exists() && path.is_dir() {
-        return true
+        return true;
     } else {
-        return false
+        return false;
     }
 }
 
