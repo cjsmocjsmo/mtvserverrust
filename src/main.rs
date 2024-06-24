@@ -203,11 +203,11 @@ pub async fn startmov(id: web::Path<String>) -> impl Responder {
         };
         result.push(movie);
     }
-    println!("{:?}", result[0].movid.clone());
-    log::info!("{:?}", result[0].movid.clone());
+    println!("{:?}", result[0].path.clone());
+    log::info!("{:?}", result[0].path.clone());
 
-    let _ = start_media(result[0].movid.clone());
-    let result = format!("Playing: {}", result[0].movid.clone());
+    let _ = start_media(result[0].path.clone());
+    let result = format!("Playing: {}", result[0].path.clone());
 
     HttpResponse::Ok().body(result)
 }
