@@ -163,6 +163,7 @@ pub fn gen_server_addr() -> SocketAddr {
 pub async fn start(path: web::Path<String>) -> impl Responder {
     let mediapath = path.into_inner();
     println!("Playing: {}", mediapath.clone());
+    log::info!("Playing: {}", mediapath.clone());
     // let _ = start_media(mediapath.clone());
     let result = format!("Playing: {}", mediapath.clone());
 
