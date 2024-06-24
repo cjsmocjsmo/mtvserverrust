@@ -178,8 +178,8 @@ pub struct Movie {
 #[get("/startmov/{mediaid}")]
 pub async fn startmov(id: web::Path<String>) -> impl Responder {
     let mediaid = id.into_inner();
-    println!("Playing: {}", mediaid.clone());
-    log::info!("Playing: {}", mediaid.clone());
+    // println!("Playing: {}", mediaid.clone());
+    // log::info!("Playing: {}", mediaid.clone());
     let db_path = env::var("MTV_DB_PATH").expect("MTV_DB_PATH not set");
     let conn = Connection::open(db_path).expect("unable to open db file");
     let mut stmt = conn
@@ -203,6 +203,8 @@ pub async fn startmov(id: web::Path<String>) -> impl Responder {
         };
         result.push(movie);
     }
+    println!("{:?}", result[0].movid.clone());
+    log::info!("{:?}", result[0].movid.clone());
 
     let _ = start_media(result[0].movid.clone());
     let result = format!("Playing: {}", result[0].movid.clone());
