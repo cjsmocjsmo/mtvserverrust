@@ -131,7 +131,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(startmov)
             .service(starttv)
             .service(pause)
-            .service(play)
+            .service(resume)
             .service(stop)
             .service(fs::Files::new("/thumbnails", thumb_path.clone()).show_files_listing())
     })
@@ -204,7 +204,7 @@ pub async fn startmov(id: web::Path<String>) -> impl Responder {
         result.push(movie);
     }
 
-    // let _ = start_media(result[0].movid.clone());
+    let _ = start_media(result[0].movid.clone());
     let result = format!("Playing: {}", result[0].movid.clone());
 
     HttpResponse::Ok().body(result)
@@ -251,8 +251,8 @@ pub fn pause_media() -> Result<(), Error> {
     Ok(())
 }
 
-#[get("/play")]
-pub async fn play() -> impl Responder {
+#[get("/resume")]
+pub async fn resume() -> impl Responder {
     let _ = play_media();
 
     HttpResponse::Ok().body("Playing")
