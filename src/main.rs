@@ -126,7 +126,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(servertvs::shogun)
             .service(servertvs::fallout)
             .service(servertvs::threebodyproblem)
-            .service(start)
+            .service(startmov)
+            .service(starttv)
             .service(pause)
             .service(play)
             .service(stop)
@@ -159,13 +160,26 @@ pub fn gen_server_addr() -> SocketAddr {
     socket
 }
 
-#[get("/start/{media}")]
-pub async fn start(path: web::Path<String>) -> impl Responder {
-    let mediapath = path.into_inner();
-    println!("Playing: {}", mediapath.clone());
-    log::info!("Playing: {}", mediapath.clone());
+#[get("/startmov/{mediaid}")]
+pub async fn startmov(id: web::Path<String>) -> impl Responder {
+    let mediaid = id.into_inner();
+    println!("Playing: {}", mediaid.clone());
+    log::info!("Playing: {}", mediaid.clone());
+
     // let _ = start_media(mediapath.clone());
-    let result = format!("Playing: {}", mediapath.clone());
+    let result = format!("Playing: {}", mediaid.clone());
+
+    HttpResponse::Ok().body(result)
+}
+
+#[get("/starttv/{mediaid}")]
+pub async fn starttv(id: web::Path<String>) -> impl Responder {
+    let mediaid = id.into_inner();
+    println!("Playing: {}", mediaid.clone());
+    log::info!("Playing: {}", mediaid.clone());
+
+    // let _ = start_media(mediapath.clone());
+    let result = format!("Playing: {}", mediaid.clone());
 
     HttpResponse::Ok().body(result)
 }
