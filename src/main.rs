@@ -7,6 +7,8 @@ use std::env;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::process::Command;
 use std::str::FromStr;
+use rusqlite::{Connection, Result};
+use serde::{Deserialize, Serialize};
 
 pub mod envvars;
 pub mod servermov;
@@ -160,14 +162,50 @@ pub fn gen_server_addr() -> SocketAddr {
     socket
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Movie {
+    pub id: u32,
+    pub name: String,
+    pub year: String,
+    pub posteraddr: String,
+    pub size: String,
+    pub path: String,
+    pub idx: String,
+    pub movid: String,
+    pub catagory: String,
+    pub httpthumbpath: String,
+}
 #[get("/startmov/{mediaid}")]
 pub async fn startmov(id: web::Path<String>) -> impl Responder {
     let mediaid = id.into_inner();
     println!("Playing: {}", mediaid.clone());
     log::info!("Playing: {}", mediaid.clone());
+    let db_path = env::var("MTV_DB_PATH").expect("MTV_DB_PATH not set");
+    let conn = Connection::open(db_path).expect("unable to open db file");
+    let mut stmt = conn
+        .prepare("SELECT * FROM movies WHERE movid = ?1")
+        .unwrap();
 
-    // let _ = start_media(mediapath.clone());
-    let result = format!("Playing: {}", mediaid.clone());
+    let mut rows = stmt.query(&[&mediaid]).expect("Unable to query db");
+    let mut result = Vec::new();
+    while let Some(row) = rows.next().unwrap() {
+        let movie = Movie {
+            id: row.get(0).unwrap(),
+            name: row.get(1).unwrap(),
+            year: row.get(2).unwrap(),
+            posteraddr: row.get(3).unwrap(),
+            size: row.get(4).unwrap(),
+            path: row.get(5).unwrap(),
+            idx: row.get(6).unwrap(),
+            movid: row.get(7).unwrap(),
+            catagory: row.get(8).unwrap(),
+            httpthumbpath: row.get(9).unwrap(),
+        };
+        result.push(movie);
+    }
+
+    // let _ = start_media(result[0].movid.clone());
+    let result = format!("Playing: {}", result[0].movid.clone());
 
     HttpResponse::Ok().body(result)
 }
