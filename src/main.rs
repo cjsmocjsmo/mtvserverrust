@@ -178,8 +178,8 @@ pub struct Movie {
 #[get("/startmov/{mediaid}")]
 pub async fn startmov(id: web::Path<String>) -> impl Responder {
     let mediaid = id.into_inner();
-    // println!("Playing: {}", mediaid.clone());
-    // log::info!("Playing: {}", mediaid.clone());
+    println!("mediaid: {}", mediaid.clone());
+    log::info!("mediaid: {}", mediaid.clone());
     let db_path = env::var("MTV_DB_PATH").expect("MTV_DB_PATH not set");
     let conn = Connection::open(db_path).expect("unable to open db file");
     let mut stmt = conn
@@ -203,8 +203,8 @@ pub async fn startmov(id: web::Path<String>) -> impl Responder {
         };
         result.push(movie);
     }
-    println!("{:?}", result[0].path.clone());
-    log::info!("{:?}", result[0].path.clone());
+    println!("movpath: {:?}", result[0].path.clone());
+    log::info!("movpath: {:?}", result[0].path.clone());
 
     let _ = start_media(result[0].path.clone());
     let result = format!("Playing: {}", result[0].path.clone());
@@ -224,15 +224,15 @@ pub async fn starttv(id: web::Path<String>) -> impl Responder {
     HttpResponse::Ok().body(result)
 }
 
-pub fn start_media(media: String) -> Result<(), Error> {
+pub async fn start_media(media: String) -> Result<(), Error> {
     let socket_path = "/tmp/mpvsocket";
     let mpv = Mpv::connect(socket_path)?;
     mpv.set_property("fullscreen", true)?;
     mpv.run_command(MpvCommand::LoadFile {
         file: media.into(),
-        option: PlaylistAddOptions::Replace,
+        option: PlaylistAddOptions::Replace
     })?;
-    mpv.disconnect();
+    // mpv.disconnect();
 
     Ok(())
 }
