@@ -5,7 +5,7 @@ use env_logger::{Builder, Target};
 use mpvipc::{Error, Mpv, MpvCommand, PlaylistAddOptions};
 use std::env;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-// use std::process::Command;
+use std::process::Command;
 use std::str::FromStr;
 use rusqlite::{Connection, Result};
 use serde::{Deserialize, Serialize};
@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     log::info!("MTV Start");
     let _vars = envvars::set_env_vars();
     log::info!("Env Vars have been set");
-    // let _mpv = init_mpv();
+    let _mpv = init_mpv();
     println!("MPV has been initialized");
 
     Builder::new().target(Target::Stdout).init();
@@ -142,13 +142,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-// pub fn init_mpv() {
-//     Command::new("mpv")
-//         .arg("--idle")
-//         .arg("--input-ipc-server=/tmp/mpvsocket")
-//         .spawn()
-//         .expect("Failed to start mpv");
-// }
+pub fn init_mpv() {
+    Command::new("mpv")
+        .arg("--idle")
+        .arg("--input-ipc-server=/tmp/mpvsocket")
+        .spawn()
+        .expect("Failed to start mpv");
+}
 
 pub fn gen_server_addr() -> SocketAddr {
     let raw_addr = env::var("MTV_RAW_ADDR").expect("MTV_RAW_ADDR not set");
