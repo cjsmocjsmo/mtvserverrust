@@ -9,7 +9,6 @@ use std::process::Command;
 use std::str::FromStr;
 use rusqlite::{Connection, Result};
 use serde::{Deserialize, Serialize};
-use dotenv::dotenv;
 
 pub mod envvars;
 pub mod servermov;
@@ -20,8 +19,7 @@ pub mod serverutils;
 
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     log::info!("MTV Start");
-    // let _vars = envvars::set_env_vars();
-    dotenv().ok();
+    let _vars = envvars::set_env_vars();
 
 
     log::info!("Env Vars have been set");
