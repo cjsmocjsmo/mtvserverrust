@@ -164,6 +164,21 @@ pub fn gen_server_addr() -> SocketAddr {
     socket
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Movie {
     pub id: u32,
