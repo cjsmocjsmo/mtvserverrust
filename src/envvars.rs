@@ -25,12 +25,12 @@ pub fn set_env_vars() {
 
     let raw_addr = env::var("MTV_RAW_ADDR");
     if raw_addr.is_err() {
-        env::set_var("MTV_RAW_ADDR", "192.168.0.99");
+        env::set_var("MTV_RAW_ADDR", "10.0.4.41");
     }
 
     let server_addr = env::var("MTV_SERVER_ADDR");
     if server_addr.is_err() {
-        env::set_var("MTV_SERVER_ADDR", "http://192.168.0.99");
+        env::set_var("MTV_SERVER_ADDR", "http://10.0.4.41");
     }
 
     let server_port = env::var("MTV_SERVER_PORT");
