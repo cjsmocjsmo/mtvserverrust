@@ -115,6 +115,13 @@ pub async fn fantasy() -> impl Responder {
     HttpResponse::Ok().body(result)
 }
 
+#[get("/ghostbusters")]
+pub async fn ghostbusters() -> impl Responder {
+    let searcht = String::from("GhostBusters");
+    let result = get_shows(searcht).await;
+    HttpResponse::Ok().body(result)
+}
+
 #[get("/godzilla")]
 pub async fn godzilla() -> impl Responder {
     let searcht = String::from("Godzilla");
@@ -160,6 +167,13 @@ pub async fn johnwick() -> impl Responder {
 #[get("/jurassicpark")]
 pub async fn jurassicpark() -> impl Responder {
     let searcht = String::from("JurassicPark");
+    let result = get_shows(searcht).await;
+    HttpResponse::Ok().body(result)
+}
+
+#[get("/kevincostner")]
+pub async fn kevincostner() -> impl Responder {
+    let searcht = String::from("KevinCostner");
     let result = get_shows(searcht).await;
     HttpResponse::Ok().body(result)
 }
