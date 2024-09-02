@@ -4,13 +4,13 @@ use std::env;
 pub fn set_env_vars() {
     let mov_path = env::var("MTV_MOVIES_PATH");
     if mov_path.is_err() {
-        env::set_var("MTV_MOVIES_PATH", "/home/pimedia/PINAS/baz/MTV/Movies/");
+        env::set_var("MTV_MOVIES_PATH", "/home/pimedia/PINAS/MTV/Movies/");
     }
     println!("MTV_MOVIES_PATH: {:?}", env::var("MTV_MOVIES_PATH"));
 
     let tv_path = env::var("MTV_TV_PATH");
     if tv_path.is_err() {
-        env::set_var("MTV_TV_PATH", "/home/pimedia/PINAS/baz/MTV/TVShows/");
+        env::set_var("MTV_TV_PATH", "/home/pimedia/PINAS/MTV/TVShows/");
     }
 
     let thumb_path = env::var("MTV_THUMBNAIL_PATH");
@@ -55,7 +55,7 @@ pub fn set_env_vars() {
 
     let posters_path = env::var("MTV_POSTER_PATH");
     if posters_path.is_err() {
-        env::set_var("MTV_POSTER_PATH", "/home/pimedia/PINAS/baz/MTV/Posters/");
+        env::set_var("MTV_POSTER_PATH", "/home/pimedia/PINAS/MTV/Posters/");
     }
 
     let setup_path = env::var("MTV_SETUP_PATH");
