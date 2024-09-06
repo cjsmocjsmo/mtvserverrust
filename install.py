@@ -69,6 +69,9 @@ class MTVBuild:
     def disable_mtv(self):
         subprocess.run(["sudo", "systemctl", "disable", "mtvserverrust.service"])
 
+    def reload_systemd(self):
+        subprocess.run(["sudo", "systemctl", "daemon-reload"])
+
 def main():
     parser = argparse.ArgumentParser(description="CLI for Rusic music server.")
     parser.add_argument("-i", "--install", action="store_true", help="Install the program")
@@ -86,21 +89,23 @@ def main():
 
         build = MTVBuild()
         build.build_mtv()
-        build.start_mtv()
         build.enable_mtv()
+        build.reload_systemd()
+        build.start_mtv()
+        
+
 
     if args.update:
         build = MTVBuild()
         build.stop_mtv()
-        build.disable_mtv()
         build.build_mtv()
         build.start_mtv()
-        build.enable_mtv()
 
     if args.delete:
         build = MTVBuild()
         build.stop_mtv()
         build.disable_mtv()
+        build.reload_systemd()
         subprocess.run(["sudo", "rm", "-rf", "/usr/share/MTV"])
         subprocess.run(["sudo", "rm", "/etc/systemd/system/mtvserverrust.service"])
         subprocess.run(["sudo", "rm", "/usr/bin/mtvserverrust"])
