@@ -22,6 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
     log::info!("Env Vars have been set");
+    
     Builder::new().target(Target::Stdout).init();
 
     let thumb_path = env::var("MTV_THUMBNAIL_PATH").expect("MTV_THUMBNAIL_PATH not set");
