@@ -71,7 +71,6 @@ class MTVBuild:
 
 def main():
     parser = argparse.ArgumentParser(description="CLI for Rusic music server.")
-    parser.add_argument("version", type=str, help="Version of the software")
     parser.add_argument("-i", "--install", action="store_true", help="Install the program")
     parser.add_argument("-u", "--update", action="store_true", help="Update the program")
     parser.add_argument("-d", "--delete", action="store_true", help="Delete the program")
