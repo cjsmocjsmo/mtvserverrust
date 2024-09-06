@@ -1,5 +1,5 @@
 # Stage 1: Build the Rust project
-FROM rust:latest as builder
+FROM rust:latest AS builder
 
 # Set the working directory
 WORKDIR /usr/src/mtvserverrust
