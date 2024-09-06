@@ -52,7 +52,7 @@ class MTVBuild:
 
     def build_mtv(self):
         subprocess.run(["cargo", "build", "--release"])
-        subprocess.run(["sudo", "cp", f"{CWD}/target/release/mtvserverrust", self.mtv_dir])
+        subprocess.run(["sudo", "cp", f"{CWD}/target/release/mtvserverrust", self.mtv_loc])
         new_mtv_loc = f"{self.mtv_loc}/mtvserverrust"
         subprocess.run(["sudo", "chmod", "775", new_mtv_loc])
         subprocess.run(["sudo", "cp", self.service_file_loc, self.service_file])
